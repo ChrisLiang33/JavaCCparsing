@@ -28,22 +28,23 @@ SKIP: /* Whitespace */
 
 TOKEN:
 {
-  <LPAREN: "(">
-| <RPAREN: ")">
-| <PLUS: "+">
-| <MINUS: "-">
-| <MULTIPLY: "*">
-//| <DIVIDE: "/">
-| <INTEGER_LITERAL: (["0"-"9"])+>
-| <CLASS: "class">
-| <IF: "if">
+   <LPAREN:    "(" >
+|  <RPAREN:    ")" >
+|  <PLUS:    "+"> 
+| <MINUS: "-" >
+|  <MULTIPLY:   "*">
+| <DIVIDE:  "/" >
+|  < INTEGER_LITERAL: (["0"-"9"])+ >
+|  <CLASS:"class">
+|  <IF: "if">
 | <ELSE: "else">
-| <PUBLIC: "public">
+|<STRING_ARRAY: "String []">
+|<PUBLIC: "public">
 | <STATIC: "static">
 | <VOID: "void">
 | <MAIN: "main">
 | <THIS: "this">
-| <DOT: ".">
+| <PERIOD: ".">
 | <WHILE: "while">
 | <EXTENDS: "extends">
 | <BOOLEAN: "boolean">
@@ -56,31 +57,24 @@ TOKEN:
 | <NOT: "!">
 | <EQUALS: "=">
 | <COMMA: ",">
-| <RETURN: "return">
-| <IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])*>
+| <IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])* >
 | <LBRACKET: "[">
 | <RBRACKET: "]">
 | <LCBRACKET: "{">
 | <RCBRACKET: "}">
 | <SEMICOLON: ";">
-//| <MORE_THAN: ">">
-| <LESS_THAN: "<">
+| <LESS_THAN: ">">
+| <MORE_THAN: "<">
+| <RETURN: "return">
 | <AND: "&&">
-//| <OR: "||">
-| <SINGLE_LINE_COMMENT: "//" (~["\n","\r"])*>
-| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
+| <OR: "||">
+|<COMMENT: "//">
+| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
 | <PRINT: "System.out.println">
 }
 
 
 /* Program Syntax */
-
-void Program():
-{}
-{
-  Exp()
-  <EOF>
-}
 
 // 
 // grammar for mini java
@@ -96,21 +90,63 @@ void Program():
 
 
 
-void Exp():
+void Program():
 {}
 {
-    MainClass() (ClassDecl())*
+    MainClass() ((ClassDecl())*) <EOF>
 }
 
 void MainClass():
 {}
 {
-    <CLASS>id()<LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><<STRING_ARRAY>
+    <CLASS>id()<LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><<STRING_ARRAY>id()<RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET
 }
 
+void ClassDecl():
+{}
+{
+    <CLASS><IDENTIFIER><LCBRACKET>((VarDecl())*) (MethodDecl()*) <RCBRACKET>
+    |
+    <CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl()*) (MethodDecl()*) <RCBRACKET>
+}
 
+void VarDecl():
+{}
+{
+    Type() <IDENTIFIER> <SEMICOLON>
+}
 
+void MethodDecl():
+{}
+{
+    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> (VarDecl()*) (Statement()*) <RETURN> Exp() <SEMICOLON><RCBRACKET>
+}
 
+void FormalList():
+{}
+{
+    Type() <IDENTIFIER> (FormalRest()*)
+    |
+    {}
+}
+
+void FormalRest():
+{}
+{
+  <COMMA> Type() <IDENTIFIER>
+}
+
+void Type():
+{}
+{
+  <INT_ARRAY>
+  |
+  <BOOLEAN>
+  |
+  <INT>
+  |
+  <IDENTIFIER>
+}
 void Statement():
 {}
 {
@@ -119,8 +155,6 @@ void Statement():
   <IF><LPAREN>Exp()<RPAREN>Statement()<ELSE>Statement()
   |
   <WHILE>
-  |
-  
 }
 
 void ExpList():
@@ -134,3 +168,5 @@ void ExpRest():
 {
   <COMMA> Exp()
 }
+
+
