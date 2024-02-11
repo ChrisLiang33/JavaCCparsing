@@ -154,10 +154,13 @@ void Statement():
   |
   <IF><LPAREN>Exp()<RPAREN>Statement()<ELSE>Statement()
   |
-  <WHILE><LPAREN>Exp()<RPAREN>Statement()
+  <WHILE> Exp() Statement()
   |
-  id()<EQUALS>Exp()
-  id()<LBRACKET>Exp()<RBRACKET><EQUALS>Exp()
+  <PRINT><LPAREN>Exp()<RPAREN><SEMICOLON
+  |
+  <IDENTIFIER><EQUALS> Exp() <SEMICOLON
+  |
+  <IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
 }
 
 void ExpList():
