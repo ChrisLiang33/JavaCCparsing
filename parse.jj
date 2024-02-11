@@ -99,15 +99,15 @@ void Program():
 void MainClass():
 {}
 {
-    <CLASS>id()<LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><<STRING_ARRAY>id()<RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET
+    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING_ARRAY><IDENTIFIER><RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET>
 }
 
 void ClassDecl():
 {}
 {
-    <CLASS><IDENTIFIER><LCBRACKET>((VarDecl())*) (MethodDecl()*) <RCBRACKET>
+    <CLASS><IDENTIFIER><LCBRACKET>(VarDecl())* (MethodDecl())* <RCBRACKET>
     |
-    <CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl()*) (MethodDecl()*) <RCBRACKET>
+    <CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl())* (MethodDecl())* <RCBRACKET>
 }
 
 void VarDecl():
@@ -119,13 +119,13 @@ void VarDecl():
 void MethodDecl():
 {}
 {
-    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> (VarDecl()*) (Statement()*) <RETURN> Exp() <SEMICOLON><RCBRACKET>
+    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> (VarDecl())* (Statement())* <RETURN> Exp() <SEMICOLON><RCBRACKET>
 }
 
 void FormalList():
 {}
 {
-    Type() <IDENTIFIER> (FormalRest()*)
+    Type() <IDENTIFIER> (FormalRest())*
     |
     {}
 }
@@ -156,9 +156,9 @@ void Statement():
   |
   <WHILE> Exp() Statement()
   |
-  <PRINT><LPAREN>Exp()<RPAREN><SEMICOLON
+  <PRINT><LPAREN>Exp()<RPAREN><SEMICOLON>
   |
-  <IDENTIFIER><EQUALS> Exp() <SEMICOLON
+  <IDENTIFIER><EQUALS> Exp() <SEMICOLON>
   |
   <IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
 }
@@ -203,7 +203,7 @@ void Exp1():
 void ExpList():
 {}
 {
-  Exp() ExpRest()*
+  Exp() (ExpRest())*
 }
 
 void ExpRest():
