@@ -163,6 +163,43 @@ void Statement():
   <IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
 }
 
+void Exp():
+{}
+{
+  <INTEGER_LITERAL> 
+  |
+  <TRUE> 
+  |
+  <FALSE> 
+  |
+  <IDENTIFIER> 
+  |
+  <THIS>
+  |
+  <NEW><IDENTIFIER><LPAREN><RPAREN>
+  |
+  <NEW><INT><LBRACKET> Exp()<RBRACKET> Exp1()
+  |
+  <LPAREN>Exp()<RPAREN> Exp1()
+  |
+  <NOT>Epx() Exp1()
+}
+
+void Exp1():
+{}
+{
+  <OPERATOR> Exp() Exp1()
+  |
+  <LBRACKET>Exp()<RBRACKET> Exp1()
+  |
+  <PERIOD> <LENGTH> Exp1()
+  |
+  <PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Exp1()
+  |
+  {}
+}
+
+
 void ExpList():
 {}
 {
