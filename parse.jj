@@ -1,0 +1,109 @@
+/*
+ * This is parse.jj
+ */
+
+options {
+  IGNORE_CASE = false;
+}
+
+PARSER_BEGIN(parse)
+class parse {
+    /** Main entry point. */
+  public static void main(String args[]) throws ParseException {
+    parse parser = new parse(System.in);
+    parser.Program();
+  }
+
+}
+PARSER_END(parse)
+
+SKIP: /* Whitespace */
+{
+  "\t"
+| "\n"
+| "\r"
+| " "
+}
+
+
+TOKEN:
+{
+   <LPAREN:    "(" >
+|  <RPAREN:    ")" >
+|  <PLUS:    "+"> 
+| <MINUS: "-" >
+|  <MULTIPLY:   "*">
+| <DIVIDE:  "/" >
+|  < INTEGER_LITERAL: (["0"-"9"])+ >
+|  <CLASS:"class">
+|  <IF: "if">
+| <ELSE: "else">
+|<STRING_ARRAY: "String []">
+|<PUBLIC: "public">
+| <STATIC: "static">
+| <VOID: "void">
+| <MAIN: "main">
+| <THIS: "this">
+| <PERIOD: ".">
+| <WHILE: "while">
+| <EXTENDS: "extends">
+| <BOOLEAN: "boolean">
+| <TRUE: "true">
+| <FALSE: "false">
+| <INT: "int">
+| <LENGTH: "length">
+| <INT_ARRAY: "int []">
+| <NEW: "new">
+| <NOT: "!">
+| <EQUALS: "=">
+| <COMMA: ",">
+| < IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])* >
+| <LBRACKET: "[">
+| <RBRACKET: "]">
+| <LCBRACKET: "{">
+| <RCBRACKET: "}">
+| <SEMICOLON: ";">
+| <LESS_THAN: ">">
+| <MORE_THAN: "<">
+| <RETURN: "return">
+| <AND: "&&">
+| <OR: "||">
+|<COMMENT: "//">
+}
+
+
+/* Program Syntax */
+
+void Program():
+{}
+{
+  Exp()
+  <EOF>
+}
+
+// 
+// grammar for mini java
+// E  -> MainClass ClassDecl*
+// MainClass -> class id { public static void main ( String [] id ) { Statement } }
+// ClassDecl -> class id { VarDecl MethodDecl } | class id extends id { VarDecl MethodDecl }
+// VarDecl -> Typeid;
+// MethodDecl -> public Type id ( FormalList ) ExpList ExpRest
+// id
+//
+//
+// 
+
+
+
+void Exp():
+{}
+{
+    MainClass() (ClassDecl())*
+}
+
+void MainClass():
+{}
+{
+    <CLASS>id()<LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><<STRING_ARRAY>
+}
+
