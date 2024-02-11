@@ -28,47 +28,47 @@ SKIP: /* Whitespace */
 
 TOKEN:
 {
-   <LPAREN:    "(" >
-|  <RPAREN:    ")" >
-|  <PLUS:    "+"> 
-| <MINUS: "-" >
-|  <MULTIPLY:   "*">
-| <DIVIDE:  "/" >
-|  < INTEGER_LITERAL: (["0"-"9"])+ >
-|  <CLASS:"class">
+   <LPAREN: "(">
+|  <RPAREN: ")">
+|  <PLUS: "+"> 
+|  <MINUS: "-">
+|  <MULTIPLY: "*">
+|  <DIVIDE: "/">
+|  <INTEGER_LITERAL: (["0"-"9"])+>
+|  <CLASS: "class">
 |  <IF: "if">
-| <ELSE: "else">
-|<STRING_ARRAY: "String []">
-|<PUBLIC: "public">
-| <STATIC: "static">
-| <VOID: "void">
-| <MAIN: "main">
-| <THIS: "this">
-| <PERIOD: ".">
-| <WHILE: "while">
-| <EXTENDS: "extends">
-| <BOOLEAN: "boolean">
-| <TRUE: "true">
-| <FALSE: "false">
-| <INT: "int">
-| <LENGTH: "length">
-| <INT_ARRAY: "int []">
-| <NEW: "new">
-| <NOT: "!">
-| <EQUALS: "=">
-| <COMMA: ",">
-| < IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])* >
-| <LBRACKET: "[">
-| <RBRACKET: "]">
-| <LCBRACKET: "{">
-| <RCBRACKET: "}">
-| <SEMICOLON: ";">
-| <LESS_THAN: ">">
-| <MORE_THAN: "<">
-| <RETURN: "return">
-| <AND: "&&">
-| <OR: "||">
-|<COMMENT: "//">
+|  <ELSE: "else">
+|  <STRING_ARRAY: "String []">
+|  <PUBLIC: "public">
+|  <STATIC: "static">
+|  <VOID: "void">
+|  <MAIN: "main">
+|  <THIS: "this">
+|  <PERIOD: ".">
+|  <WHILE: "while">
+|  <EXTENDS: "extends">
+|  <BOOLEAN: "boolean">
+|  <TRUE: "true">
+|  <FALSE: "false">
+|  <INT: "int">
+|  <LENGTH: "length">
+|  <INT_ARRAY: "int []">
+|  <NEW: "new">
+|  <NOT: "!">
+|  <EQUALS: "=">
+|  <COMMA: ",">
+|  <IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])*>
+|  <LBRACKET: "[">
+|  <RBRACKET: "]">
+|  <LCBRACKET: "{">
+|  <RCBRACKET: "}">
+|  <SEMICOLON: ";">
+|  <LESS_THAN: ">">
+|  <MORE_THAN: "<">
+|  <RETURN: "return">
+|  <AND: "&&">
+|  <OR: "||">
+|  <COMMENT: "//">
 }
 
 
