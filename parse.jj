@@ -182,7 +182,7 @@ void Exp():
   |
   <LPAREN>Exp()<RPAREN> Exp1()
   |
-  <NOT>Epx() Exp1()
+  <NOT>Exp() Exp1()
 }
 
 void Exp1():
