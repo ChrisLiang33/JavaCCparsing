@@ -23,6 +23,9 @@ SKIP: /* Whitespace */
 | "\n"
 | "\r"
 | " "
+| "//"
+| <SINGLE_LINE_COMMENT>
+| <MULTI_LINE_COMMENT>
 }
 
 
@@ -68,9 +71,10 @@ TOKEN:
 | <RETURN: "return">
 | <AND: "&&">
 | <OR: "||">
-|<COMMENT: "//">
 | <OPERATOR: "&&"|"<"|"+"|"-"|"*">
 | <PRINT: "System.out.println">
+| <SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* >
+| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
 }
 
 
