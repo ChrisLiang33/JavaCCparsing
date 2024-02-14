@@ -421,18 +421,6 @@ class parse implements parseConstants {
     finally { jj_save(5, xla); }
   }
 
-  static private boolean jj_3_6() {
-    if (jj_scan_token(PERIOD)) return true;
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_5() {
-    if (jj_scan_token(PERIOD)) return true;
-    if (jj_scan_token(LENGTH)) return true;
-    return false;
-  }
-
   static private boolean jj_3_2() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(LBRACKET)) return true;
@@ -454,6 +442,18 @@ class parse implements parseConstants {
   static private boolean jj_3_3() {
     if (jj_scan_token(NEW)) return true;
     if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_scan_token(PERIOD)) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_5() {
+    if (jj_scan_token(PERIOD)) return true;
+    if (jj_scan_token(LENGTH)) return true;
     return false;
   }
 
@@ -480,10 +480,10 @@ class parse implements parseConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x1000,0x800000,0x29000000,0x10000,0x29000000,0x402000,0x0,0x29000000,0x29000000,0x402000,0x402000,0x6100800,0x80000020,0x0,0x0,};
+      jj_la1_0 = new int[] {0x2000,0x1000000,0x52000000,0x20000,0x52000000,0x804000,0x0,0x52000000,0x52000000,0x804000,0x804000,0xc201000,0x40,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x0,0x0,0x4,0x0,0x4,0x8024,0x2,0x4,0x4,0x8024,0x8020,0x4,0x0,0x4008,0x2,};
+      jj_la1_1 = new int[] {0x0,0x0,0x8,0x0,0x8,0x8048,0x4,0x8,0x8,0x8048,0x8040,0x8,0x1,0x4010,0x4,};
    }
   static final private JJCalls[] jj_2_rtns = new JJCalls[6];
   static private boolean jj_rescan = false;
@@ -693,7 +693,7 @@ class parse implements parseConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[48];
+    boolean[] la1tokens = new boolean[50];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -710,7 +710,7 @@ class parse implements parseConstants {
         }
       }
     }
-    for (int i = 0; i < 48; i++) {
+    for (int i = 0; i < 50; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
