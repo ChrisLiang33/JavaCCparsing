@@ -38,7 +38,7 @@ TOKEN:
 |  <CLASS:"class">
 |  <IF: "if">
 | <ELSE: "else">
-|<STRING_ARRAY: "String []">
+|  <STRING: "String"> //<STRING_ARRAY: "String []">
 |<PUBLIC: "public">
 | <STATIC: "static">
 | <VOID: "void">
@@ -93,21 +93,23 @@ TOKEN:
 void Program():
 {}
 {
-    MainClass() ((ClassDecl())*) <EOF>
+    MainClass() ((ClassDecl())*) 
+    {System.out.println("parsable");}
+    <EOF>
 }
 
 void MainClass():
 {}
 {
-    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING_ARRAY><IDENTIFIER><RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET>
+    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING><LBRACKET><RBRACKET><IDENTIFIER><RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET>
 }
 
 void ClassDecl():
 {}
 {
-    <CLASS><IDENTIFIER><LCBRACKET>(VarDecl())* (MethodDecl())* <RCBRACKET>
-    |
-    <CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl())* (MethodDecl())* <RCBRACKET>
+    <CLASS><IDENTIFIER>(<EXTENDS><IDENTIFIER>)?<LCBRACKET>(VarDecl())* (MethodDecl())* <RCBRACKET>
+    //|
+    //<CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl())* (MethodDecl())* <RCBRACKET>
 }
 
 void VarDecl():
@@ -148,55 +150,61 @@ void Type():
   <IDENTIFIER>
 }
 void Statement():
-{}
+{ Token t; }
 {
-  <LCBRACKET>(Statement())*<RCBRACKET> 
+  (
+  t =<LCBRACKET>(Statement())*<RCBRACKET> 
   |
-  <IF><LPAREN>Exp()<RPAREN>Statement()<ELSE>Statement()
+  t =<IF><LPAREN>Exp()<RPAREN>Statement()<ELSE>Statement()
   |
-  <WHILE> Exp() Statement()
+  t =<WHILE> Exp() Statement()
   |
-  <PRINT><LPAREN>Exp()<RPAREN><SEMICOLON>
+  t =<PRINT><LPAREN>Exp()<RPAREN><SEMICOLON>
   |
-  <IDENTIFIER><EQUALS> Exp() <SEMICOLON>
+  LOOKAHEAD(2) t = <IDENTIFIER><EQUALS> Exp() <SEMICOLON>
   |
-  <IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
+  LOOKAHEAD(2) t=<IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
+  )
 }
 
 void Exp():
-{}
+{ Token t; }
 {
-  <INTEGER_LITERAL> 
+  (
+    t =<INTEGER_LITERAL> 
   |
-  <TRUE> 
+  t =<TRUE> 
   |
-  <FALSE> 
+  t =<FALSE> 
   |
-  <IDENTIFIER> 
+  t =<IDENTIFIER> 
   |
-  <THIS>
+  t =<THIS>
   |
-  <NEW><IDENTIFIER><LPAREN><RPAREN>
+  LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN>
   |
-  <NEW><INT><LBRACKET> Exp()<RBRACKET> Exp1()
+  LOOKAHEAD(2) t =<NEW><INT><LBRACKET> Exp()<RBRACKET> Exp1()
   |
   <LPAREN>Exp()<RPAREN> Exp1()
   |
   <NOT>Exp() Exp1()
+  )
 }
 
 void Exp1():
-{}
+{ Token t; }
 {
-  <OPERATOR> Exp() Exp1()
+  (
+  t=<OPERATOR> Exp() Exp1()
   |
-  <LBRACKET>Exp()<RBRACKET> Exp1()
+  t=<LBRACKET>Exp()<RBRACKET> Exp1()
   |
-  <PERIOD> <LENGTH> Exp1()
+  LOOKAHEAD(2) t=<PERIOD> <LENGTH> Exp1()
   |
-  <PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Exp1()
+  LOOKAHEAD(2) t=<PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Exp1()
   |
   {}
+  )
 }
 
 

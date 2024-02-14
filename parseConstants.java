@@ -29,7 +29,7 @@ public interface parseConstants {
   /** RegularExpression Id. */
   int ELSE = 14;
   /** RegularExpression Id. */
-  int STRING_ARRAY = 15;
+  int STRING = 15;
   /** RegularExpression Id. */
   int PUBLIC = 16;
   /** RegularExpression Id. */
@@ -115,7 +115,7 @@ public interface parseConstants {
     "\"class\"",
     "\"if\"",
     "\"else\"",
-    "\"String []\"",
+    "\"String\"",
     "\"public\"",
     "\"static\"",
     "\"void\"",
