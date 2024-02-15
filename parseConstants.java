@@ -17,85 +17,79 @@ public interface parseConstants {
   /** RegularExpression Id. */
   int RPAREN = 8;
   /** RegularExpression Id. */
-  int OPERATOR = 9;
+  int ADD_OP = 9;
   /** RegularExpression Id. */
-  int PLUS = 10;
+  int MULTIPLY = 10;
   /** RegularExpression Id. */
-  int MINUS = 11;
+  int DIVIDE = 11;
   /** RegularExpression Id. */
-  int MULTIPLY = 12;
+  int INTEGER_LITERAL = 12;
   /** RegularExpression Id. */
-  int DIVIDE = 13;
+  int CLASS = 13;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 14;
+  int IF = 14;
   /** RegularExpression Id. */
-  int CLASS = 15;
+  int ELSE = 15;
   /** RegularExpression Id. */
-  int IF = 16;
+  int STRING = 16;
   /** RegularExpression Id. */
-  int ELSE = 17;
+  int PUBLIC = 17;
   /** RegularExpression Id. */
-  int STRING = 18;
+  int STATIC = 18;
   /** RegularExpression Id. */
-  int PUBLIC = 19;
+  int VOID = 19;
   /** RegularExpression Id. */
-  int STATIC = 20;
+  int MAIN = 20;
   /** RegularExpression Id. */
-  int VOID = 21;
+  int THIS = 21;
   /** RegularExpression Id. */
-  int MAIN = 22;
+  int PERIOD = 22;
   /** RegularExpression Id. */
-  int THIS = 23;
+  int WHILE = 23;
   /** RegularExpression Id. */
-  int PERIOD = 24;
+  int EXTENDS = 24;
   /** RegularExpression Id. */
-  int WHILE = 25;
+  int BOOLEAN = 25;
   /** RegularExpression Id. */
-  int EXTENDS = 26;
+  int TRUE = 26;
   /** RegularExpression Id. */
-  int BOOLEAN = 27;
+  int FALSE = 27;
   /** RegularExpression Id. */
-  int TRUE = 28;
+  int INT = 28;
   /** RegularExpression Id. */
-  int FALSE = 29;
+  int LENGTH = 29;
   /** RegularExpression Id. */
-  int INT = 30;
+  int INT_ARRAY = 30;
   /** RegularExpression Id. */
-  int LENGTH = 31;
+  int NEW = 31;
   /** RegularExpression Id. */
-  int INT_ARRAY = 32;
+  int NOT = 32;
   /** RegularExpression Id. */
-  int NEW = 33;
+  int EQUALS = 33;
   /** RegularExpression Id. */
-  int NOT = 34;
+  int COMMA = 34;
   /** RegularExpression Id. */
-  int EQUALS = 35;
+  int RETURN = 35;
   /** RegularExpression Id. */
-  int COMMA = 36;
+  int IDENTIFIER = 36;
   /** RegularExpression Id. */
-  int RETURN = 37;
+  int LBRACKET = 37;
   /** RegularExpression Id. */
-  int IDENTIFIER = 38;
+  int RBRACKET = 38;
   /** RegularExpression Id. */
-  int LBRACKET = 39;
+  int LCBRACKET = 39;
   /** RegularExpression Id. */
-  int RBRACKET = 40;
+  int RCBRACKET = 40;
   /** RegularExpression Id. */
-  int LCBRACKET = 41;
+  int SEMICOLON = 41;
   /** RegularExpression Id. */
-  int RCBRACKET = 42;
+  int LESS_THAN = 42;
   /** RegularExpression Id. */
-  int SEMICOLON = 43;
+  int MORE_THAN = 43;
   /** RegularExpression Id. */
-  int LESS_THAN = 44;
+  int AND = 44;
   /** RegularExpression Id. */
-  int MORE_THAN = 45;
-  /** RegularExpression Id. */
-  int AND = 46;
-  /** RegularExpression Id. */
-  int OR = 47;
-  /** RegularExpression Id. */
-  int PRINT = 48;
+  int PRINT = 45;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -111,9 +105,7 @@ public interface parseConstants {
     "<MULTI_LINE_COMMENT>",
     "\"(\"",
     "\")\"",
-    "<OPERATOR>",
-    "\"+\"",
-    "\"-\"",
+    "<ADD_OP>",
     "\"*\"",
     "\"/\"",
     "<INTEGER_LITERAL>",
@@ -146,10 +138,9 @@ public interface parseConstants {
     "\"{\"",
     "\"}\"",
     "\";\"",
-    "\">\"",
     "\"<\"",
+    "\">\"",
     "\"&&\"",
-    "\"||\"",
     "\"System.out.println\"",
   };
 

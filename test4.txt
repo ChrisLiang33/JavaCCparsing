@@ -1,6 +1,6 @@
 class test{
     public static void main(String[] args) {
-        add b = new calculate();
+        //add b = new calculate();
         int []j = new int[20];
         boolean c;
         int p;

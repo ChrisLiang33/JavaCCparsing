@@ -33,9 +33,10 @@ TOKEN:
 {
    <LPAREN:    "(" >
 |  <RPAREN:    ")" >
-| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
-|  <PLUS:    "+"> 
-| <MINUS: "-" >
+//| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
+| <ADD_OP: "+"|"-">
+//|  <PLUS:    "+"> 
+//| <MINUS: "-" >
 |  <MULTIPLY:   "*">
 | <DIVIDE:  "/" >
 |  < INTEGER_LITERAL: (["0"-"9"])+ >
@@ -68,10 +69,10 @@ TOKEN:
 | <LCBRACKET: "{">
 | <RCBRACKET: "}">
 | <SEMICOLON: ";">
-| <LESS_THAN: ">">
-| <MORE_THAN: "<">
+| <LESS_THAN: "<">
+| <MORE_THAN: ">">
 | <AND: "&&">
-| <OR: "||">
+//| <OR: "||">
 | <PRINT: "System.out.println">
 //| <SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* >
 //| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
@@ -123,12 +124,10 @@ void VarDecl():
 }
 
 void MethodDecl():
-{}
+{ }
 {
-    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> 
-    (VarDecl())* 
-    (Statement())* 
-    <RETURN> Exp() <SEMICOLON> <RCBRACKET>
+ <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET>
+  (LOOKAHEAD(2) VarDecl())* (Statement())* <RETURN> Exp() <SEMICOLON> <RCBRACKET>
 }
 
 void FormalList():
@@ -175,40 +174,114 @@ void Statement():
 }
 
 void Exp():
-{ Token t; }
+{}
 {
-  (
-    t =<INTEGER_LITERAL> Exp1()
-  |
-  t =<TRUE> Exp1()
-  |
-  t =<FALSE> Exp1()
-  |
-  t =<IDENTIFIER> Exp1()
-  |
-  t =<THIS> Exp1()
-  |
-  LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN> Exp1()
-  |
-  LOOKAHEAD(2) t =<NEW><INT><LBRACKET> Exp()<RBRACKET> Exp1()
-  |
-  <LPAREN>Exp()<RPAREN> Exp1()
-  |
-  <NOT>Exp() Exp1()
-  )
+  Exp4()
 }
 
-void Exp1():
+void Exp4():
+{}
+{
+  Exp9()  Exp4a()
+}
+
+void Exp4a():
+{}
+{
+  <AND> Exp9() Exp4a()
+  |
+  {}
+}
+
+void Exp9():
+{}
+{
+  Exp11() Exp9a()
+}
+
+void Exp9a():
+{}
+{
+  <LESS_THAN> Exp11() Exp9a()
+  |
+  {}
+}
+void Exp11():
+{}
+{
+  Exp12() Exp11a()
+}
+
+void Exp11a():
+{}
+{
+  <ADD_OP> Exp12() Exp11a()
+  |
+  {}
+}
+
+void Exp12():
+{}
+{
+  Exp14() Exp12a()
+}
+
+void Exp12a():
+{}
+{
+  <MULTIPLY> Exp14() Exp12a()
+  |
+  {}
+}
+
+void Exp14():
+{}
+{
+  Exp16() Exp14a()
+}
+
+void Exp14a():
+{}
+{
+  <NOT> Exp16() Exp14a()
+  |
+  {}
+}
+
+void Exp16():
+{ Token t;}
+{
+  (
+    t = <INTEGER_LITERAL> Exp()
+    |
+    t = <TRUE> Exp()
+    |
+    t = <FALSE> Exp()
+    |
+    t = <IDENTIFIER> Exp()
+    |
+    t = <THIS> Exp()
+    |
+    LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN> Expa() Exp()
+    |
+    LOOKAHEAD(2) t =<NEW><INT><LBRACKET> Exp()<RBRACKET> Expa() Exp()
+    | 
+    t = <LPAREN>Exp()<RPAREN> Expa() Exp()
+    | 
+    Expa()
+  )
+}
+void Expa():
 { Token t; }
 {
   (
-  t=<OPERATOR> Exp() Exp1()
+ // t=<OPERATOR> Exp() Expa()
+ // |
+  t=<LBRACKET>Exp()<RBRACKET> Expa()
   |
-  t=<LBRACKET>Exp()<RBRACKET> Exp1()
+  LOOKAHEAD(2) t=<PERIOD> <LENGTH> Expa()
   |
-  LOOKAHEAD(2) t=<PERIOD> <LENGTH> Exp1()
-  |
-  LOOKAHEAD(2) t=<PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Exp1()
+  LOOKAHEAD(2) t=<PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Expa()
   |
   {}
   )
