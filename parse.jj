@@ -7,13 +7,14 @@ options {
 }
 
 PARSER_BEGIN(parse)
-class parse {
-    /** Main entry point. */
-  public static void main(String args[]) throws ParseException {
-    parse parser = new parse(System.in);
-    parser.Program();
-  }
-
+import java.io.*;
+public class parse
+{
+    public static void main(String args[]) throws ParseException 
+    {
+        parse parser = new parse(System.in);
+        parser.Program();
+    }
 }
 PARSER_END(parse)
 
@@ -23,6 +24,8 @@ SKIP: /* Whitespace */
 | "\n"
 | "\r"
 | " "
+| <SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* >
+| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
 }
 
 
@@ -30,6 +33,7 @@ TOKEN:
 {
    <LPAREN:    "(" >
 |  <RPAREN:    ")" >
+| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
 |  <PLUS:    "+"> 
 | <MINUS: "-" >
 |  <MULTIPLY:   "*">
@@ -57,6 +61,7 @@ TOKEN:
 | <NOT: "!">
 | <EQUALS: "=">
 | <COMMA: ",">
+| <RETURN: "return">
 | <IDENTIFIER: (["a"-"z", "A"-"Z"])+ (["a"-"z", "A"-"Z", "0"-"9", "_"])* >
 | <LBRACKET: "[">
 | <RBRACKET: "]">
@@ -65,12 +70,11 @@ TOKEN:
 | <SEMICOLON: ";">
 | <LESS_THAN: ">">
 | <MORE_THAN: "<">
-| <RETURN: "return">
 | <AND: "&&">
 | <OR: "||">
-|<COMMENT: "//">
-| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
 | <PRINT: "System.out.println">
+//| <SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* >
+//| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
 }
 
 
@@ -101,7 +105,7 @@ void Program():
 void MainClass():
 {}
 {
-    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING><LBRACKET><RBRACKET><IDENTIFIER><RPAREN><LCBRACKET>Statement()<RCBRACKET><RCBRACKET>
+    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING><LBRACKET><RBRACKET><IDENTIFIER><RPAREN><LCBRACKET>Statement() <RCBRACKET><RCBRACKET>
 }
 
 void ClassDecl():
@@ -121,7 +125,10 @@ void VarDecl():
 void MethodDecl():
 {}
 {
-    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> (VarDecl())* (Statement())* <RETURN> Exp() <SEMICOLON><RCBRACKET>
+    <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET> 
+    (VarDecl())* 
+    (Statement())* 
+    <RETURN> Exp() <SEMICOLON> <RCBRACKET>
 }
 
 void FormalList():
@@ -171,17 +178,17 @@ void Exp():
 { Token t; }
 {
   (
-    t =<INTEGER_LITERAL> 
+    t =<INTEGER_LITERAL> Exp1()
   |
-  t =<TRUE> 
+  t =<TRUE> Exp1()
   |
-  t =<FALSE> 
+  t =<FALSE> Exp1()
   |
-  t =<IDENTIFIER> 
+  t =<IDENTIFIER> Exp1()
   |
-  t =<THIS>
+  t =<THIS> Exp1()
   |
-  LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN>
+  LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN> Exp1()
   |
   LOOKAHEAD(2) t =<NEW><INT><LBRACKET> Exp()<RBRACKET> Exp1()
   |
