@@ -269,8 +269,8 @@ void Statement(int indent):
       {System.out.println("{");}
       //(Statement(indent+1))*
       Statements(indent)
-      //{System.out.println("");}
-      //{System.out.format("%1$"+4*indent+"s", "");}
+      {System.out.println("");}
+      {System.out.format("%1$"+4*(indent-1)+"s", "");}
       {System.out.print("}");}
       <RCBRACKET> 
   |
