@@ -264,6 +264,8 @@ Token b;
       jj_consume_token(LCBRACKET);
        System.out.println("{");
       Statements(indent);
+       System.out.println("");
+       System.out.format("%1$"+4*(indent-1)+"s", "");
        System.out.print("}");
       jj_consume_token(RCBRACKET);
       break;
