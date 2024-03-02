@@ -12,8 +12,16 @@ public class parse
 {
     public static void main(String args[]) throws ParseException 
     {
-        parse parser = new parse(System.in);
-        parser.Program();
+        System.out.println("Reading from standard input...");
+        parse t = new parse(System.in);
+        try {
+            t.Program(0);
+            System.out.println("Thank you.");
+    }   catch (Exception e) {
+            System.out.println("Oops.");
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+    }
     }
 }
 PARSER_END(parse)
@@ -34,7 +42,8 @@ TOKEN:
    <LPAREN:    "(" >
 |  <RPAREN:    ")" >
 //| <OPERATOR: "&&"|"<"|"+"|"-"|"*">
-| <ADD_OP: "+"|"-">
+| <ADD: "+">
+| <MINUS: "-">
 //|  <PLUS:    "+"> 
 //| <MINUS: "-" >
 |  <MULTIPLY:   "*">
@@ -57,7 +66,7 @@ TOKEN:
 | <FALSE: "false">
 | <INT: "int">
 | <LENGTH: "length">
-| <INT_ARRAY: "int []">
+| <INT_ARRAY: "int[]">
 | <NEW: "new">
 | <NOT: "!">
 | <EQUALS: "=">
@@ -78,98 +87,245 @@ TOKEN:
 //| <MULTI_LINE_COMMENT: "/*" (~["*"] | "*" ~["/", "*"])* "*" "/" >
 }
 
-
-/* Program Syntax */
-
-// 
-// grammar for mini java
-// E  -> MainClass ClassDecl*
-// MainClass -> class id { public static void main ( String [] id ) { Statement } }
-// ClassDecl -> class id { VarDecl MethodDecl } | class id extends id { VarDecl MethodDecl }
-// VarDecl -> Typeid;
-// MethodDecl -> public Type id ( FormalList ) ExpList ExpRest
-// id
-//
-//
-// 
-
-
-
-void Program():
+void Program(int indent):
 {}
 {
-    MainClass() ((ClassDecl())*) 
-    {System.out.println("parsable");}
+    MainClass(indent) (ClassDecls(indent)) 
+   // {System.out.println("parsable");}
     <EOF>
 }
 
-void MainClass():
-{}
+void MainClass(int indent):
+{Token s,t;}
 {
-    <CLASS><IDENTIFIER><LCBRACKET> <PUBLIC><STATIC><VOID><MAIN><LPAREN><STRING><LBRACKET><RBRACKET><IDENTIFIER><RPAREN><LCBRACKET>Statement() <RCBRACKET><RCBRACKET>
+    <CLASS>
+    t=<IDENTIFIER>
+    <LCBRACKET> 
+    {System.out.println("class "+t.image+"{");}
+    <PUBLIC><STATIC><VOID><MAIN>
+    {System.out.print("    public static void main"); }
+    <LPAREN><STRING><LBRACKET><RBRACKET>
+    s=<IDENTIFIER>
+    <RPAREN>
+    {System.out.println("(String[] "+s.image + "){");  }
+    <LCBRACKET>Statement(indent+2) <RCBRACKET><RCBRACKET>
+    {System.out.print("  }\n}\n"); }
 }
 
-void ClassDecl():
+void ClassDecls(int indent):
 {}
 {
-    <CLASS><IDENTIFIER>(<EXTENDS><IDENTIFIER>)?<LCBRACKET>(VarDecl())* (MethodDecl())* <RCBRACKET>
-    //|
-    //<CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl())* (MethodDecl())* <RCBRACKET>
+  (ClassDecl(indent))*
 }
 
-void VarDecl():
+void ClassDecl(int indent):
+{Token t,s;
+String a,b;}
+{ 
+    <CLASS>
+    t =<IDENTIFIER>
+    {System.out.print("class "+t.image);}
+    (<EXTENDS>
+    s=<IDENTIFIER>
+    {System.out.print(" extends "+s.image);}
+    )?
+    <LCBRACKET>
+    {System.out.print("{");}
+
+    a=VarDecls(indent+1)
+    {System.out.println(a);}
+    MethodDecls(indent+1) 
+    //{System.out.println(b);}
+    <RCBRACKET>
+    {System.out.println("}");}
+    
+   // |
+   // <CLASS><IDENTIFIER><EXTENDS> <IDENTIFIER> <LCBRACKET> (VarDecl())* (MethodDecl())* <RCBRACKET>
+}
+
+String VarDecls(int indent):
+{String a,b;}
+{ LOOKAHEAD(3)
+  a=VarDecl(indent) b=VarDecls(indent)
+    {return (a+b);}
+  |
+  {} {return("");}
+}
+
+String VarDecl(int indent):
+{Token t;
+String a;}
+{
+    a = Type() 
+    t=<IDENTIFIER> <SEMICOLON>
+    {return
+      String.format("\n%1$"+4*indent+"s","") + a + " " + t.image+";"
+      ;}
+}
+
+void MethodDecls(int indent):
 {}
 {
-    Type() <IDENTIFIER> <SEMICOLON>
-}
-
-void MethodDecl():
-{ }
-{
- <PUBLIC> Type() <IDENTIFIER> <LPAREN>FormalList() <RPAREN><LCBRACKET>
-  (LOOKAHEAD(2) VarDecl())* (Statement())* <RETURN> Exp() <SEMICOLON> <RCBRACKET>
-}
-
-void FormalList():
-{}
-{
-    Type() <IDENTIFIER> (FormalRest())*
+    LOOKAHEAD(3)
+    (MethodDecl(indent))* VarDecls(indent)
     |
     {}
 }
 
-void FormalRest():
-{}
+
+
+void MethodDecl(int indent):
+{ String s,t;
+String v ="";
+Token a;}
 {
-  <COMMA> Type() <IDENTIFIER>
+
+ <PUBLIC> 
+ t = Type() 
+ a=<IDENTIFIER> 
+ <LPAREN>
+ s=FormalList() 
+ {System.out.format("%1$"+4*indent+"s", "");}
+ {System.out.print("public "+t+" " + a.image + "(" + s+ ")" + "{");}
+
+ <RPAREN><LCBRACKET>
+ v = VarDecls(indent+1)
+ //(LOOKAHEAD(2) 
+  //v=VarDecl(indent+1))* 
+  //{System.out.format("%1$"+4*indent+"s", "");}
+  {System.out.println(v);}
+  (Statement(indent+1))* 
+  
+  <RETURN> 
+  {System.out.format("%1$"+4*(indent+1)+"s", "");}
+  {System.out.print("return ");}
+  Exp() 
+  <SEMICOLON> 
+  {System.out.print(";");}
+  <RCBRACKET>
+  {System.out.println("");}
+  {System.out.format("%1$"+4*indent+"s", "");}
+  {System.out.println("}");}
+
 }
 
-void Type():
+String FormalList():
+{Token a;
+String b,c;}
+{
+    c= Type() a=<IDENTIFIER> b=FormalRests()
+    {return(c+" " + a + b);}
+    |
+    {}{return("");}
+}
+
+String FormalRests():
+{String a,b;}
+{ LOOKAHEAD(3)
+  a=FormalRest() b=FormalRests()
+    {return (a+b);}
+  |
+  {} {return("");}
+}
+
+
+String FormalRest():
+{String a;
+Token b;}
+{
+  <COMMA> 
+  a=Type() 
+  b=<IDENTIFIER>
+  {return (", "+a+" " +b.image);}
+}
+
+String Type():
+{ Token t; }
+{ 
+  (
+    t = <INT_ARRAY>
+    |
+    t = <BOOLEAN>
+    |
+    t = <INT>
+    |
+    t = <IDENTIFIER>
+  )
+  { return t.image; }
+}
+
+void Statements(int indent):
 {}
 {
-  <INT_ARRAY>
-  |
-  <BOOLEAN>
-  |
-  <INT>
-  |
-  <IDENTIFIER>
+  (Statement(indent))*
 }
-void Statement():
+
+void Statement(int indent):
 { Token t; }
 {
   (
-  t =<LCBRACKET>(Statement())*<RCBRACKET> 
+    <LCBRACKET>
+    //{System.out.format("%1$"+4*indent+"s", "");}
+      {System.out.println("{");}
+      //(Statement(indent+1))*
+      Statements(indent)
+      //{System.out.println("");}
+      //{System.out.format("%1$"+4*indent+"s", "");}
+      {System.out.print("}");}
+      <RCBRACKET> 
   |
-  t =<IF><LPAREN>Exp()<RPAREN>Statement()<ELSE>Statement()
+  <IF>
+  <LPAREN>
+  {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print("if (");}
+  Exp()
+  <RPAREN>
+    {System.out.print(")");}
+  Statement(indent+1)
+  {System.out.println("");}
+  <ELSE>
+    {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print("else");}
+  Statement(indent+1)
+    {System.out.println();}
   |
-  t =<WHILE> Exp() Statement()
+  <WHILE> <LPAREN>
+  {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print("while (");}
+  Exp() 
+  <RPAREN>
+  {System.out.print(")");}
+  //{System.out.println("");}
+  Statement(indent+1)
+    {System.out.println();}
   |
-  t =<PRINT><LPAREN>Exp()<RPAREN><SEMICOLON>
+  <PRINT><LPAREN>
+  {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print("System.out.println(");}
+    Exp()
+  <RPAREN><SEMICOLON>
+    {System.out.print(");");}
+    {System.out.println();}
+    
   |
-  LOOKAHEAD(2) t = <IDENTIFIER><EQUALS> Exp() <SEMICOLON>
+  LOOKAHEAD(2) t = <IDENTIFIER><EQUALS> 
+  {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print(t.image+"=");}
+    Exp() <SEMICOLON>
+    {System.out.print(";");}
+    {System.out.println();}
   |
-  LOOKAHEAD(2) t=<IDENTIFIER><LBRACKET>Exp()<RBRACKET> <EQUALS> Exp() <SEMICOLON>
+  LOOKAHEAD(2) t=<IDENTIFIER><LBRACKET>
+  {System.out.format("%1$"+4*indent+"s", "");}
+    {System.out.print(t.image+"[");}
+  Exp()
+  <RBRACKET> <EQUALS> 
+    {System.out.print("]=");}
+  Exp() 
+    {System.out.print(";");}
+    <SEMICOLON>
+
+
   )
 }
 
@@ -188,7 +344,11 @@ void Exp4():
 void Exp4a():
 {}
 {
-  <AND> Exp9() Exp4a()
+  <AND> 
+  {System.out.print("&&");}
+  Exp9() 
+  Exp4a() 
+  
   |
   {}
 }
@@ -202,7 +362,11 @@ void Exp9():
 void Exp9a():
 {}
 {
-  <LESS_THAN> Exp11() Exp9a()
+  <LESS_THAN> 
+  {System.out.print("<");}
+  Exp11() 
+   Exp9a()
+ 
   |
   {}
 }
@@ -215,7 +379,15 @@ void Exp11():
 void Exp11a():
 {}
 {
-  <ADD_OP> Exp12() Exp11a()
+  <ADD> 
+  {System.out.print("+");}
+  Exp12() 
+  Exp11a()
+  
+  |
+  <MINUS> 
+  {System.out.print("-");}Exp12() 
+  Exp11a()
   |
   {}
 }
@@ -229,7 +401,11 @@ void Exp12():
 void Exp12a():
 {}
 {
-  <MULTIPLY> Exp14() Exp12a()
+  <MULTIPLY> 
+  {System.out.print("*");}
+  Exp14() 
+  Exp12a()
+  
   |
   {}
 }
@@ -243,7 +419,11 @@ void Exp14():
 void Exp14a():
 {}
 {
-  <NOT> Exp16() Exp14a()
+  <NOT> 
+  {System.out.print("!");}
+  Exp16() 
+  Exp14a()
+  
   |
   {}
 }
@@ -252,21 +432,45 @@ void Exp16():
 { Token t;}
 {
   (
-    t = <INTEGER_LITERAL> Exp()
+    t = <INTEGER_LITERAL> 
+    {System.out.print(t.image);}
+    Exp()
+    
     |
-    t = <TRUE> Exp()
+    t = <TRUE> 
+    {System.out.print("true");}
+    Exp()
+    
     |
-    t = <FALSE> Exp()
+    t = <FALSE> 
+    {System.out.print("false");}
+    Exp()
+    
     |
-    t = <IDENTIFIER> Exp()
+    t = <IDENTIFIER> 
+    {System.out.print(t.image);}
+    Exp()
+    
     |
-    t = <THIS> Exp()
+    t = <THIS> 
+    {System.out.print("this");}
+    Exp()
+    
     |
-    LOOKAHEAD(2) t =<NEW><IDENTIFIER><LPAREN><RPAREN> Expa() Exp()
+    LOOKAHEAD(2) <NEW>t=<IDENTIFIER><LPAREN>
+    {System.out.print("new "+t.image+"()");}
+    <RPAREN> Expa() Exp()
+
     |
-    LOOKAHEAD(2) t =<NEW><INT><LBRACKET> Exp()<RBRACKET> Expa() Exp()
+    LOOKAHEAD(2) t =<NEW><INT><LBRACKET>
+    {System.out.print("new int [");}
+     Exp()<RBRACKET> Expa() Exp()
+     {System.out.print("]");}
     | 
-    t = <LPAREN>Exp()<RPAREN> Expa() Exp()
+    t = <LPAREN>
+    {System.out.print("(");}
+    Exp()<RPAREN> 
+    {System.out.print(")");}Expa() Exp() 
     | 
     Expa()
   )
@@ -277,11 +481,21 @@ void Expa():
   (
  // t=<OPERATOR> Exp() Expa()
  // |
-  t=<LBRACKET>Exp()<RBRACKET> Expa()
+  t=<LBRACKET>
+  {System.out.print("[");}
+  Exp()<RBRACKET> 
+  {System.out.print("]");}
+  Expa()
   |
-  LOOKAHEAD(2) t=<PERIOD> <LENGTH> Expa()
+  LOOKAHEAD(2) t=<PERIOD> <LENGTH> 
+  {System.out.print(".length");}
+  Expa()
   |
-  LOOKAHEAD(2) t=<PERIOD> <IDENTIFIER> <LPAREN> ExpList() <RPAREN> Expa()
+  LOOKAHEAD(2) <PERIOD> t=<IDENTIFIER><LPAREN> 
+  {System.out.print("."+t.image+"(");}
+  ExpList() 
+  {System.out.print(")");}<RPAREN> 
+  Expa()
   |
   {}
   )
@@ -297,7 +511,7 @@ void ExpList():
 void ExpRest():
 {}
 {
-  <COMMA> Exp()
+  <COMMA> 
+  {System.out.print(", ");}Exp()
+  
 }
-
-
